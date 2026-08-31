@@ -1,6 +1,7 @@
 import mysql.connector
 from tkinter import messagebox
 from tkinter import *
+from tkinter import ttk
 def get_db_connection():
     return mysql.connector.connect(
         host="localhost",user="root",password="bismillah",database="Exam"
@@ -77,63 +78,63 @@ def open_form1():
     )
 
     e_gender2=Radiobutton(F1,variable=g,value="Female",text="Female")
-    e_gender2.grid(row=2, column=2
+    e_gender2.grid(row=3, column=1
     )
 
     Label(F1,text="Age:").grid(
-        row=3,column=0,padx=5,pady=5,sticky="e"
-    )
-    e_age=Entry(F1)
-    e_age.grid(row=3, column=1, padx=5, pady=5)
-
-    Label(F1,text="City:").grid(
         row=4,column=0,padx=5,pady=5,sticky="e"
     )
+    e_age=Entry(F1)
+    e_age.grid(row=4, column=1, padx=5, pady=5)
+
+    Label(F1,text="City:").grid(
+        row=5,column=0,padx=5,pady=5,sticky="e"
+    )
     e_city=Entry(F1)
-    e_city.grid(row=4, column=1, padx=5, pady=5)
+    e_city.grid(row=5, column=1, padx=5, pady=5)
 
     Label(F1, text="Class:").grid(         
-        row=5, column=0, padx=5, pady=5, sticky="e"
+        row=6, column=0, padx=5, pady=5, sticky="e"
              )     
-    e_class=Combobox(F1,values=["5th","6th","7th","8th","9th","10th","11th","12th"],state="readonly")
-    e_class.grid(row=5,column=1,padx=1,pady=5,columnspan=2,sticky="e")
+    e_class=ttk.Combobox(F1,values=["5th","6th","7th","8th","9th","10th","11th","12th"],state="readonly")
+    e_class.grid(row=6,column=1,padx=1,pady=5,columnspan=2,sticky="w")
     e_class.set("Select Class")
     
     Label(F1, text="Subject 1:").grid(
-        row=6, column=0, padx=5, pady=5, sticky="e"
+        row=7, column=0, padx=5, pady=5, sticky="e"
             )
     e_s1 = Entry(F1)     
-    e_s1.grid(row=6, column=1, padx=5, pady=5) 
+    e_s1.grid(row=7, column=1, padx=5, pady=5) 
  
     Label(F1, text="Subject 2:").grid(
-        row=7, column=0, padx=5, pady=5, sticky="e"     
+        row=8, column=0, padx=5, pady=5, sticky="e"     
             )
     e_s2 =Entry(F1)
-    e_s2.grid(row=7, column=1, padx=5, pady=5) 
+    e_s2.grid(row=8, column=1, padx=5, pady=5) 
  
     Label(F1, text="Subject 3:").grid(
-        row=8, column=0, padx=5, pady=5, sticky="e"     
-            )     
-    e_s3 =Entry(F1)     
-    e_s3.grid(row=8, column=1, padx=5, pady=5) 
- 
-    Label(F1, text="Subject 4:").grid(
         row=9, column=0, padx=5, pady=5, sticky="e"     
             )     
-    e_s4 =Entry(F1)     
-    e_s4.grid(row=9, column=1, padx=5, pady=5)
-
-    Label(F1, text="Subject 5:").grid(
+    e_s3 =Entry(F1)     
+    e_s3.grid(row=9, column=1, padx=5, pady=5) 
+ 
+    Label(F1, text="Subject 4:").grid(
         row=10, column=0, padx=5, pady=5, sticky="e"     
             )     
-    e_s5 =Entry(F1)     
-    e_s5.grid(row=10, column=1, padx=5, pady=5)
+    e_s4 =Entry(F1)     
+    e_s4.grid(row=10, column=1, padx=5, pady=5)
 
-    Label(F1, text="Subject 6:").grid(
+    Label(F1, text="Subject 5:").grid(
         row=11, column=0, padx=5, pady=5, sticky="e"     
             )     
+    e_s5 =Entry(F1)     
+    e_s5.grid(row=11, column=1, padx=5, pady=5)
+
+    Label(F1, text="Subject 6:").grid(
+        row=12, column=0, padx=5, pady=5, sticky="e"     
+            )     
     e_s6 =Entry(F1)     
-    e_s6.grid(row=11, column=1, padx=5, pady=5)
+    e_s6.grid(row=12, column=1, padx=5, pady=5)
 
     def save_data():
         try:
@@ -175,5 +176,43 @@ Button(root,text="Enter Studen Data",width=30,command=open_form1).grid(row=0,col
 
 def open_form2():
     F2=Toplevel(root)
-    F2
+    F2.title("Form 2 - Display Student Data")
+    Label(F2,text="Enter Roll No:").grid(
+        row=0,column=0,padx=5,pady=5,sticky="e"
+    )
+    e_search_roll=Entry(F2)
+    e_search_roll.grid(row=0,column=1,padx=5,pady=5)
+
+    #Frame to show Detais
+    display_frame=Frame(F2)
+    display_frame.grid(row=1,column=0,columnspan=2,pady=10)
+
+    def search_student():
+        for widget in display_frame.winfo_children():
+            widget.destroy()
+        try:
+            conn=get_db_connection()
+            cursor=conn.cursor()
+            cursor.execute(
+                "SELECT * FROM students WHERE roll_no=%s",
+                (e_search_roll.get(),),
+            )
+            row=cursor.fetchone()
+            conn.close()
+
+            if row:
+                labels=[
+                    "Roll No",
+                    "Name",
+                    "Gender",
+                    "Age",
+                    "City",
+                    "Class",
+                    "Sub 1",
+                    "Sub 2",
+                    "Sub 3",
+                    "Sub 4",
+                    "Sub 5",
+                    "Sub 6",
+                ]
 root.mainloop()
