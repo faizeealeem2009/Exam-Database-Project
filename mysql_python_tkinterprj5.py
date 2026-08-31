@@ -1,0 +1,179 @@
+import mysql.connector
+from tkinter import messagebox
+from tkinter import *
+def get_db_connection():
+    return mysql.connector.connect(
+        host="localhost",user="root",password="bismillah",database="Exam"
+    )
+
+def init_db():
+    try:
+        conn=mysql.connector.connect(
+            host="localhost",user="root",password="bismillah"
+        )
+        cursor=conn.cursor()
+        cursor.execute("CREATE DATABASE IF NOT EXISTS Exam")
+        cursor.execute("USE Exam")
+        cursor.execute(
+            '''
+            CREATE TABLE IF NOT EXISTS students (
+                roll_no INT PRIMARY KEY,
+                name VARCHAR(100),
+                gender VARCHAR(10),
+                age INT,
+                city VARCHAR(50),
+                class VARCHAR(20),
+                sub1 INT,
+                sub2 INT,
+                sub3 INT,
+                sub4 INT,
+                sub5 INT,
+                sub6 INT
+                )
+            '''
+        )
+        conn.commit()
+        cursor.execute("SHOW TABLES")
+        for c in cursor.fetchall():
+            print(c)
+        conn.close()
+        
+    except mysql.connector.Error as err:
+        messagebox.showerror(
+            "Dabase Error",f"Failed to initialize database: {err}"
+        )
+        
+init_db()
+
+#Main Application Window
+root=Tk()
+root.title("Exam Management System")
+root.geometry("400x300")
+
+# FORM 1: ENTER STUDENT DATA
+def open_form1():
+    g=StringVar()
+    F1=Toplevel(root)
+    F1.title("Form 1 - Enter Student Data")
+    #Labels and Entries
+    Label(F1,text="Roll No:").grid(
+        row=0,column=0,padx=5,pady=5,sticky="e"
+    )
+    e_roll=Entry(F1)
+    e_roll.grid(row=0,column=1,padx=5,pady=5)
+
+    Label(F1,text="Name:").grid(
+        row=1,column=0,padx=5,pady=5,sticky="e"
+    )
+    e_name=Entry(F1)
+    e_name.grid(row=1,column=1,padx=5,pady=5)
+
+    Label(F1,text="Gender:").grid(
+        row=2,column=0
+    )
+    
+    e_gender1=Radiobutton(F1,variable=g,value="Male",text="Male")
+    e_gender1.grid(row=2, column=1
+    )
+
+    e_gender2=Radiobutton(F1,variable=g,value="Female",text="Female")
+    e_gender2.grid(row=2, column=2
+    )
+
+    Label(F1,text="Age:").grid(
+        row=3,column=0,padx=5,pady=5,sticky="e"
+    )
+    e_age=Entry(F1)
+    e_age.grid(row=3, column=1, padx=5, pady=5)
+
+    Label(F1,text="City:").grid(
+        row=4,column=0,padx=5,pady=5,sticky="e"
+    )
+    e_city=Entry(F1)
+    e_city.grid(row=4, column=1, padx=5, pady=5)
+
+    Label(F1, text="Class:").grid(         
+        row=5, column=0, padx=5, pady=5, sticky="e"
+             )     
+    e_class=Combobox(F1,values=["5th","6th","7th","8th","9th","10th","11th","12th"],state="readonly")
+    e_class.grid(row=5,column=1,padx=1,pady=5,columnspan=2,sticky="e")
+    e_class.set("Select Class")
+    
+    Label(F1, text="Subject 1:").grid(
+        row=6, column=0, padx=5, pady=5, sticky="e"
+            )
+    e_s1 = Entry(F1)     
+    e_s1.grid(row=6, column=1, padx=5, pady=5) 
+ 
+    Label(F1, text="Subject 2:").grid(
+        row=7, column=0, padx=5, pady=5, sticky="e"     
+            )
+    e_s2 =Entry(F1)
+    e_s2.grid(row=7, column=1, padx=5, pady=5) 
+ 
+    Label(F1, text="Subject 3:").grid(
+        row=8, column=0, padx=5, pady=5, sticky="e"     
+            )     
+    e_s3 =Entry(F1)     
+    e_s3.grid(row=8, column=1, padx=5, pady=5) 
+ 
+    Label(F1, text="Subject 4:").grid(
+        row=9, column=0, padx=5, pady=5, sticky="e"     
+            )     
+    e_s4 =Entry(F1)     
+    e_s4.grid(row=9, column=1, padx=5, pady=5)
+
+    Label(F1, text="Subject 5:").grid(
+        row=10, column=0, padx=5, pady=5, sticky="e"     
+            )     
+    e_s5 =Entry(F1)     
+    e_s5.grid(row=10, column=1, padx=5, pady=5)
+
+    Label(F1, text="Subject 6:").grid(
+        row=11, column=0, padx=5, pady=5, sticky="e"     
+            )     
+    e_s6 =Entry(F1)     
+    e_s6.grid(row=11, column=1, padx=5, pady=5)
+
+    def save_data():
+        try:
+            conn=get_db_connection()
+            cursor=conn.cursor()
+            query='''INSERT INTO students
+                    (roll_no,name,gender,age,city,class,sub1,sub2,sub3,sub4,sub5,sub6)
+                    VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,)'''
+            vals=(
+                int(e_roll.get()),
+                e_name.get(),
+                e_gender.get(),
+                int(e_age.get()),
+                e_city.get(),
+                e_class.get(),
+                int(e_s1.get()),
+                int(e_s2.get()),
+                int(e_s3.get()),
+                int(e_s4.get()),
+                int(e_s5.get()),
+                int(e_s6.get()),
+            )
+            cursor.execute(query,vals)
+            conn.commit()
+            conn.close()
+            messagebox.showinfo("Success","Students Saved Successfully!")
+            F1.destroy()
+        except Exception as e:
+            messagebox.showerror("Error",f"Failed to save data: {e}")
+    
+    Button(F1,text="Save Student",command=save_data).grid(
+        row=12,column=0,columnspan=2,padx=5,pady=5
+    )
+
+Button(root,text="Enter Studen Data",width=30,command=open_form1).grid(row=0,column=0,pady=5)
+
+
+# FORM 2: Display Individual Student Data
+
+def open_form2():
+    F2=Toplevel(root)
+    F2
+root.mainloop()
