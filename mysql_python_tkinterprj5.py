@@ -54,19 +54,30 @@ root.geometry("400x300")
 # FORM 1: ENTER STUDENT DATA
 def open_form1():
     g=StringVar()
+    roll=IntVar()
+    name=StringVar()
+    city=StringVar()
+    age=IntVar()
+    clas=StringVar()
+    s1=IntVar()
+    s2=IntVar()
+    s3=IntVar()
+    s4=IntVar()
+    s5=IntVar()
+    s6=IntVar()
     F1=Toplevel(root)
     F1.title("Form 1 - Enter Student Data")
     #Labels and Entries
     Label(F1,text="Roll No:").grid(
         row=0,column=0,padx=5,pady=5,sticky="e"
     )
-    e_roll=Entry(F1)
+    e_roll=Entry(F1,textvariable=roll)
     e_roll.grid(row=0,column=1,padx=5,pady=5)
 
     Label(F1,text="Name:").grid(
         row=1,column=0,padx=5,pady=5,sticky="e"
     )
-    e_name=Entry(F1)
+    e_name=Entry(F1,textvariable=name)
     e_name.grid(row=1,column=1,padx=5,pady=5)
 
     Label(F1,text="Gender:").grid(
@@ -84,56 +95,56 @@ def open_form1():
     Label(F1,text="Age:").grid(
         row=4,column=0,padx=5,pady=5,sticky="e"
     )
-    e_age=Entry(F1)
+    e_age=Entry(F1,textvariable=age)
     e_age.grid(row=4, column=1, padx=5, pady=5)
 
     Label(F1,text="City:").grid(
         row=5,column=0,padx=5,pady=5,sticky="e"
     )
-    e_city=Entry(F1)
+    e_city=Entry(F1,textvariable=city)
     e_city.grid(row=5, column=1, padx=5, pady=5)
 
     Label(F1, text="Class:").grid(         
         row=6, column=0, padx=5, pady=5, sticky="e"
              )     
-    e_class=ttk.Combobox(F1,values=["5th","6th","7th","8th","9th","10th","11th","12th"],state="readonly")
+    e_class=ttk.Combobox(F1,values=["5th","6th","7th","8th","9th","10th","11th","12th"],textvariable=clas,state="readonly")
     e_class.grid(row=6,column=1,padx=1,pady=5,columnspan=2,sticky="w")
     e_class.set("Select Class")
     
     Label(F1, text="Subject 1:").grid(
         row=7, column=0, padx=5, pady=5, sticky="e"
             )
-    e_s1 = Entry(F1)     
+    e_s1 = Entry(F1,textvariable=s1)     
     e_s1.grid(row=7, column=1, padx=5, pady=5) 
  
     Label(F1, text="Subject 2:").grid(
         row=8, column=0, padx=5, pady=5, sticky="e"     
             )
-    e_s2 =Entry(F1)
+    e_s2 =Entry(F1,textvariable=s2)
     e_s2.grid(row=8, column=1, padx=5, pady=5) 
  
     Label(F1, text="Subject 3:").grid(
         row=9, column=0, padx=5, pady=5, sticky="e"     
             )     
-    e_s3 =Entry(F1)     
+    e_s3 =Entry(F1,textvariable=s3)     
     e_s3.grid(row=9, column=1, padx=5, pady=5) 
  
     Label(F1, text="Subject 4:").grid(
         row=10, column=0, padx=5, pady=5, sticky="e"     
             )     
-    e_s4 =Entry(F1)     
+    e_s4 =Entry(F1,textvariable=s4)     
     e_s4.grid(row=10, column=1, padx=5, pady=5)
 
     Label(F1, text="Subject 5:").grid(
         row=11, column=0, padx=5, pady=5, sticky="e"     
             )     
-    e_s5 =Entry(F1)     
+    e_s5 =Entry(F1,textvariable=s5)     
     e_s5.grid(row=11, column=1, padx=5, pady=5)
 
     Label(F1, text="Subject 6:").grid(
         row=12, column=0, padx=5, pady=5, sticky="e"     
             )     
-    e_s6 =Entry(F1)     
+    e_s6 =Entry(F1,textvariable=s6)     
     e_s6.grid(row=12, column=1, padx=5, pady=5)
 
     def save_data():
@@ -146,8 +157,7 @@ def open_form1():
             vals=(
                 int(e_roll.get()),
                 e_name.get(),
-                e_gender1.get(),
-                e_gender2.get(),
+                g.get(),
                 int(e_age.get()),
                 e_city.get(),
                 e_class.get(),
@@ -166,12 +176,9 @@ def open_form1():
         except Exception as e:
             messagebox.showerror("Error",f"Failed to save data: {e}")
     
-    Button(F1,text="Save Student",command=save_data).grid(
+    Button(F1,text="Save Student",bg="green",fg="White",font=("Arial",10,"bold"),command=save_data).grid(
         row=13,column=0,columnspan=2,padx=5,pady=5
     )
-
-Button(root,text="Enter Student Data",width=30,command=open_form1).grid(row=0,column=0,pady=5)
-
 
 # FORM 2: Display Student Data
 
@@ -234,11 +241,10 @@ def open_form2():
                     )
         except Exception as e:
             messagebox.showerror("Error", f"Search failed: {e}")
-    Button(F2, text="Search", command=search_student).grid(
-        row=1, column=2,columnspan=2, pady=5
+    Button(F2, text="Search", command=search_student,bg="green",fg="White",font=("Arial",10,"bold"),).grid(
+        row=1, column=1,columnspan=2,pady=5
         )
 
-Button(root,text="Display Student Data",width=30,command=open_form2).grid(row=1,column=0,pady=5) 
 
 # FORM 3: Update Student Data
 
@@ -349,13 +355,11 @@ def open_form3():
 
     Button(
         F3,
-        text="Fetch Record",
-        command=fetch_and_populate
+        text="Fetch Record",command=fetch_and_populate,bg="green",fg="White",font=("Arial",10,"bold")
     ).grid(
         row=1, column=0, columnspan=2, pady=5
     )
 
-Button(root,text="Update Student Data",width=30,command=open_form3).grid(row=2,column=0,pady=5)
 
 
 # FORM 4: Delete Student Data
@@ -420,11 +424,121 @@ def open_form4():
 
     Button(
         F4,
-        text="Delete Record",
-        command=delete_data
+        text="Delete Record",command=delete_data,bg="red",fg="White",font=("Arial",10,"bold"),
     ).grid(
         row=1, column=0, columnspan=2, pady=10
     )
 
-Button(root,text="Delete Student Data",width=30,command=open_form4).grid(row=3,column=0,pady=5)
+
+
+# FORM 5: DISPLAY ALL DATA & EXPORT TO CSV
+
+def open_form5():
+    F5 = Toplevel(root)
+    F5.title("Form 5 - All Students & Export CSV")
+    F5.geometry("900x400")
+
+    # Scrollable Table Frame setup
+    table_frame = Frame(F5)
+    table_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+    scroll_x = ttk.Scrollbar(table_frame, orient="horizontal")
+    scroll_y = ttk.Scrollbar(table_frame, orient="vertical")
+
+    cols = (
+        "Roll No",
+        "Name",
+        "Gender",
+        "Age",
+        "City",
+        "Class",
+        "Sub 1",
+        "Sub 2",
+        "Sub 3",
+        "Sub 4",
+        "Sub 5",
+        "Sub 6",
+    )
+
+    tree = ttk.Treeview(
+        table_frame,
+        columns=cols,
+        show="headings",
+        xscrollcommand=scroll_x.set,
+        yscrollcommand=scroll_y.set,
+    )
+
+    scroll_x.pack(side="bottom", fill="x")
+    scroll_y.pack(side="right", fill="y")
+    scroll_x.config(command=tree.xview)
+    scroll_y.config(command=tree.yview)
+
+    for col in cols:
+        tree.heading(col, text=col)
+        tree.column(col, width=70, anchor="center")
+
+    tree.pack(fill="both", expand=True)
+
+    # Fetch and load data into Treeview
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM students")
+        rows = cursor.fetchall()
+
+        for row in rows:
+            tree.insert("", "end", values=row)
+
+        conn.close()
+
+    except Exception as e:
+        messagebox.showerror(
+            "Error",
+            f"Failed to fetch data: {e}"
+        )
+
+    # Export to CSV logic
+    def export_to_csv():
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM students")
+            rows = cursor.fetchall()
+
+            with open(
+                "student_data.csv",
+                "w",
+                newline="",
+                encoding="utf-8"
+            ) as file:
+                writer = csv.writer(file)
+                writer.writerow(cols)  # Write header row
+                writer.writerows(rows)  # Write data rows
+
+            conn.close()
+
+            messagebox.showinfo(
+                "Success",
+                "Data exported successfully to 'student_data.csv'!"
+            )
+
+        except Exception as e:
+            messagebox.showerror(
+                "Error",
+                f"Export failed: {e}"
+            )
+
+    Button(
+        F5,
+        text="Export All Data to CSV",command=export_to_csv,bg="green",fg="White",font=("Arial",10,"bold")
+    ).grid(
+        row=1, column=0, pady=10
+    )
+
+Label(root, text="Exam Management System",font=("Arial", 16, "bold") ).grid(row=0, column=0, columnspan=2, pady=20, padx=50) 
+Button(root,text="1. Enter Student Data",width=30,bg="green",fg="White",font=("Arial", 10, "bold"),command=open_form1).grid(row=1,column=0,padx=5,columnspan=2,pady=5)
+Button(root,text="2. Display Student Data",width=30,bg="blue",fg="White",font=("Arial", 10, "bold"),command=open_form2).grid(row=2,column=0,columnspan=2,padx=5,pady=5) 
+Button(root,text="3. Update Student Data",width=30,bg="orange",fg="White",font=("Arial", 10, "bold"),command=open_form3).grid(row=3,column=0,padx=5,columnspan=2,pady=5)
+Button(root,text="4. Delete Student Data",width=30,bg="red",fg="White",font=("Arial", 10, "bold"),command=open_form4).grid(row=4,column=0,padx=5,columnspan=2,pady=5)
+Button(root,text="5. Display All & Export Data",width=30,bg="purple",fg="White",font=("Arial", 10, "bold"),command=open_form5).grid(row=5,column=0,columnspan=2,padx=5,pady=5)
 root.mainloop()
