@@ -146,7 +146,8 @@ def open_form1():
             vals=(
                 int(e_roll.get()),
                 e_name.get(),
-                e_gender.get(),
+                e_gender1.get(),
+                e_gender2.get(),
                 int(e_age.get()),
                 e_city.get(),
                 e_class.get(),
@@ -166,13 +167,13 @@ def open_form1():
             messagebox.showerror("Error",f"Failed to save data: {e}")
     
     Button(F1,text="Save Student",command=save_data).grid(
-        row=12,column=0,columnspan=2,padx=5,pady=5
+        row=13,column=0,columnspan=2,padx=5,pady=5
     )
 
-Button(root,text="Enter Studen Data",width=30,command=open_form1).grid(row=0,column=0,pady=5)
+Button(root,text="Enter Student Data",width=30,command=open_form1).grid(row=0,column=0,pady=5)
 
 
-# FORM 2: Display Individual Student Data
+# FORM 2: Display Student Data
 
 def open_form2():
     F2=Toplevel(root)
@@ -215,4 +216,215 @@ def open_form2():
                     "Sub 5",
                     "Sub 6",
                 ]
+                for i in range(len(labels)):
+                    Label(
+                        display_frame,
+                        text=f"{labels[i]}:",
+                        font=("Arial", 10, "bold"),
+                    ).grid(row=i, column=0, padx=5, pady=2, sticky="e")
+                    Label(
+                        display_frame,
+                        text=str(row[i])).grid(
+                            row=i, column=1, sticky="w", padx=5, pady=2
+                        )
+                        
+                else:
+                    messagebox.showwarning(
+                        "Not Found", "No record found for this Roll Number."
+                    )
+        except Exception as e:
+            messagebox.showerror("Error", f"Search failed: {e}")
+    Button(F2, text="Search", command=search_student).grid(
+        row=1, column=2,columnspan=2, pady=5
+        )
+
+Button(root,text="Display Student Data",width=30,command=open_form2).grid(row=1,column=0,pady=5) 
+
+# FORM 3: Update Student Data
+
+def open_form3():
+    F3 = Toplevel(root)
+    F3.title("Form 3 - Update Student Data")
+
+    Label(F3, text="Enter Roll No:").grid(
+        row=0, column=0, padx=5, pady=5, sticky="e"
+    )
+
+    e_search = Entry(F3)
+    e_search.grid(row=0, column=1, padx=5, pady=5)
+
+    # Placeholders for entry widgets
+    entries = {}
+
+    def fetch_and_populate():
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT * FROM students WHERE roll_no = %s",
+                (e_search.get(),)
+            )
+            row = cursor.fetchone()
+            conn.close()
+
+            if row:
+                fields = [
+                    "Roll No", "Name", "Gender", "Age", "City", "Class",
+                    "Sub 1", "Sub 2", "Sub 3", "Sub 4", "Sub 5", "Sub 6",
+                ]
+
+                for i, field in enumerate(fields):
+                    Label(F3, text=f"{field}:").grid(
+                        row=i + 2, column=0, padx=5, pady=2, sticky="e"
+                    )
+
+                    ent = Entry(F3)
+                    ent.grid(row=i + 2, column=1, padx=5, pady=2)
+                    ent.insert(0, str(row[i]))
+
+                    if i == 0:
+                        # Roll No Primary Key should remain disabled
+                        ent.config(state="disabled")
+
+                    entries[field] = ent
+
+                Button(
+                    F3,
+                    text="Update Data",
+                    command=update_data
+                ).grid(
+                    row=15, column=0, columnspan=2, pady=10
+                )
+
+            else:
+                messagebox.showwarning(
+                    "Not Found",
+                    "Roll Number not found!"
+                )
+
+        except Exception as e:
+            messagebox.showerror(
+                "Error",
+                f"Failed to fetch record: {e}"
+            )
+
+    def update_data():
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+
+            query = """UPDATE students SET name=%s, gender=%s, age=%s, city=%s, class=%s, sub1=%s, sub2=%s, sub3=%s, sub4=%s, sub5=%s, sub6=%s WHERE roll_no=%s"""
+
+            vals = (
+                entries["Name"].get(),
+                entries["Gender"].get(),
+                int(entries["Age"].get()),
+                entries["City"].get(),
+                entries["Class"].get(),
+                int(entries["Sub 1"].get()),
+                int(entries["Sub 2"].get()),
+                int(entries["Sub 3"].get()),
+                int(entries["Sub 4"].get()),
+                int(entries["Sub 5"].get()),
+                int(entries["Sub 6"].get()),
+                int(entries["Roll No"].get()),
+            )
+
+            cursor.execute(query, vals)
+            conn.commit()
+            conn.close()
+
+            messagebox.showinfo(
+                "Success",
+                "Record updated successfully!"
+            )
+
+            F3.destroy()
+
+        except Exception as e:
+            messagebox.showerror(
+                "Error",
+                f"Failed to update record: {e}"
+            )
+
+    Button(
+        F3,
+        text="Fetch Record",
+        command=fetch_and_populate
+    ).grid(
+        row=1, column=0, columnspan=2, pady=5
+    )
+
+Button(root,text="Update Student Data",width=30,command=open_form3).grid(row=2,column=0,pady=5)
+
+
+# FORM 4: Delete Student Data
+
+def open_form4():
+    F4 = Toplevel(root)
+    F4.title("Form 4 - Delete Student Data")
+
+    Label(F4, text="Enter Roll No to Delete:").grid(
+        row=0, column=0, padx=5, pady=10, sticky="e"
+    )
+
+    e_del_roll = Entry(F4)
+    e_del_roll.grid(row=0, column=1, padx=5, pady=10)
+
+    def delete_data():
+        roll = e_del_roll.get()
+
+        if not roll:
+            messagebox.showwarning(
+                "Warning",
+                "Please enter a Roll Number!"
+            )
+            return
+
+        confirm = messagebox.askyesno(
+            "Confirm",
+            f"Are you sure you want to delete Roll No: {roll}?"
+        )
+
+        if confirm:
+            try:
+                conn = get_db_connection()
+                cursor = conn.cursor()
+
+                cursor.execute(
+                    "DELETE FROM students WHERE roll_no = %s",
+                    (roll,)
+                )
+
+                conn.commit()
+
+                if cursor.rowcount > 0:
+                    messagebox.showinfo(
+                        "Success",
+                        "Student record deleted successfully!"
+                    )
+                    F4.destroy()
+                else:
+                    messagebox.showwarning(
+                        "Not Found",
+                        "Roll Number does not exist!"
+                    )
+
+                conn.close()
+
+            except Exception as e:
+                messagebox.showerror(
+                    "Error",
+                    f"Deletion failed: {e}"
+                )
+
+    Button(
+        F4,
+        text="Delete Record",
+        command=delete_data
+    ).grid(
+        row=1, column=0, columnspan=2, pady=10
+    )
+
+Button(root,text="Delete Student Data",width=30,command=open_form4).grid(row=3,column=0,pady=5)
 root.mainloop()
