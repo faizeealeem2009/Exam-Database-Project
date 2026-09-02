@@ -48,6 +48,7 @@ init_db()
 
 #Main Application Window
 root=Tk()
+
 root.title("Exam Management System")
 root.geometry("400x300")
 
@@ -111,37 +112,37 @@ def open_form1():
     e_class.grid(row=6,column=1,padx=1,pady=5,columnspan=2,sticky="w")
     e_class.set("Select Class")
     
-    Label(F1, text="Subject 1:").grid(
+    Label(F1, text="Physics:").grid(
         row=7, column=0, padx=5, pady=5, sticky="e"
             )
     e_s1 = Entry(F1,textvariable=s1)     
     e_s1.grid(row=7, column=1, padx=5, pady=5) 
  
-    Label(F1, text="Subject 2:").grid(
+    Label(F1, text="Chemistry:").grid(
         row=8, column=0, padx=5, pady=5, sticky="e"     
             )
     e_s2 =Entry(F1,textvariable=s2)
     e_s2.grid(row=8, column=1, padx=5, pady=5) 
  
-    Label(F1, text="Subject 3:").grid(
+    Label(F1, text="Maths:").grid(
         row=9, column=0, padx=5, pady=5, sticky="e"     
             )     
     e_s3 =Entry(F1,textvariable=s3)     
     e_s3.grid(row=9, column=1, padx=5, pady=5) 
  
-    Label(F1, text="Subject 4:").grid(
+    Label(F1, text="Geography:").grid(
         row=10, column=0, padx=5, pady=5, sticky="e"     
             )     
     e_s4 =Entry(F1,textvariable=s4)     
     e_s4.grid(row=10, column=1, padx=5, pady=5)
 
-    Label(F1, text="Subject 5:").grid(
+    Label(F1, text="English:").grid(
         row=11, column=0, padx=5, pady=5, sticky="e"     
             )     
     e_s5 =Entry(F1,textvariable=s5)     
     e_s5.grid(row=11, column=1, padx=5, pady=5)
 
-    Label(F1, text="Subject 6:").grid(
+    Label(F1, text="Urdu:").grid(
         row=12, column=0, padx=5, pady=5, sticky="e"     
             )     
     e_s6 =Entry(F1,textvariable=s6)     
@@ -153,7 +154,7 @@ def open_form1():
             cursor=conn.cursor()
             query='''INSERT INTO students
                     (roll_no,name,gender,age,city,class,sub1,sub2,sub3,sub4,sub5,sub6)
-                    VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,)'''
+                    VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
             vals=(
                 int(e_roll.get()),
                 e_name.get(),
@@ -193,7 +194,7 @@ def open_form2():
 
     #Frame to show Detais
     display_frame=Frame(F2)
-    display_frame.grid(row=1,column=0,columnspan=2,pady=10)
+    display_frame.grid(row=2,column=0,columnspan=2,pady=10)
 
     def search_student():
         for widget in display_frame.winfo_children():
@@ -203,7 +204,7 @@ def open_form2():
             cursor=conn.cursor()
             cursor.execute(
                 "SELECT * FROM students WHERE roll_no=%s",
-                (e_search_roll.get(),),
+                (e_search_roll.get(),)
             )
             row=cursor.fetchone()
             conn.close()
@@ -235,10 +236,10 @@ def open_form2():
                             row=i, column=1, sticky="w", padx=5, pady=2
                         )
                         
-                else:
-                    messagebox.showwarning(
-                        "Not Found", "No record found for this Roll Number."
-                    )
+            else:
+                messagebox.showwarning(
+                    "Not Found", "No record found for this Roll Number."
+                )
         except Exception as e:
             messagebox.showerror("Error", f"Search failed: {e}")
     Button(F2, text="Search", command=search_student,bg="green",fg="White",font=("Arial",10,"bold"),).grid(
@@ -541,4 +542,5 @@ Button(root,text="2. Display Student Data",width=30,bg="blue",fg="White",font=("
 Button(root,text="3. Update Student Data",width=30,bg="orange",fg="White",font=("Arial", 10, "bold"),command=open_form3).grid(row=3,column=0,padx=5,columnspan=2,pady=5)
 Button(root,text="4. Delete Student Data",width=30,bg="red",fg="White",font=("Arial", 10, "bold"),command=open_form4).grid(row=4,column=0,padx=5,columnspan=2,pady=5)
 Button(root,text="5. Display All & Export Data",width=30,bg="purple",fg="White",font=("Arial", 10, "bold"),command=open_form5).grid(row=5,column=0,columnspan=2,padx=5,pady=5)
+
 root.mainloop()
