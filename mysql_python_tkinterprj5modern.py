@@ -1,111 +1,8 @@
+import csv
 import mysql.connector
 from tkinter import messagebox
 from tkinter import *
 from tkinter import ttk
-
-# ================= MODERN GUI THEME =================
-APP_BG = "#0F172A"
-SIDEBAR_BG = "#111827"
-CARD_BG = "#1E293B"
-INPUT_BG = "#F8FAFC"
-TEXT = "#F8FAFC"
-MUTED = "#CBD5E1"
-BLUE = "#2563EB"
-CYAN = "#0891B2"
-ORANGE = "#EA580C"
-RED = "#DC2626"
-PURPLE = "#7C3AED"
-GREEN = "#16A34A"
-BORDER = "#334155"
-
-def _modern_button(master, **kwargs):
-    bg = kwargs.pop("bg", BLUE)
-    fg = kwargs.pop("fg", "white")
-    kwargs.setdefault("font", ("Segoe UI", 10, "bold"))
-    kwargs.setdefault("relief", "flat")
-    kwargs.setdefault("bd", 0)
-    kwargs.setdefault("cursor", "hand2")
-    kwargs.setdefault("padx", 12)
-    kwargs.setdefault("pady", 8)
-    b = tk.Button(master, bg=bg, fg=fg, activebackground=bg,
-                  activeforeground="white", **kwargs)
-    return b
-
-def _modern_label(master, **kwargs):
-    kwargs.setdefault("font", ("Segoe UI", 10))
-    kwargs.setdefault("fg", TEXT)
-    kwargs.setdefault("bg", master.cget("bg") if "bg" not in kwargs else kwargs["bg"])
-    return tk.Label(master, **kwargs)
-
-def _modern_entry(master, **kwargs):
-    kwargs.setdefault("font", ("Segoe UI", 10))
-    kwargs.setdefault("bg", INPUT_BG)
-    kwargs.setdefault("fg", "#111827")
-    kwargs.setdefault("insertbackground", "#111827")
-    kwargs.setdefault("relief", "flat")
-    kwargs.setdefault("bd", 0)
-    kwargs.setdefault("highlightthickness", 1)
-    kwargs.setdefault("highlightbackground", BORDER)
-    kwargs.setdefault("highlightcolor", BLUE)
-    kwargs.setdefault("ipady", 6)
-    return tk.Entry(master, **kwargs)
-
-def _modern_frame(master, **kwargs):
-    kwargs.setdefault("bg", CARD_BG)
-    return tk.Frame(master, **kwargs)
-
-def _modern_radiobutton(master, **kwargs):
-    kwargs.setdefault("font", ("Segoe UI", 10))
-    kwargs.setdefault("fg", TEXT)
-    kwargs.setdefault("bg", master.cget("bg"))
-    kwargs.setdefault("activebackground", kwargs["bg"])
-    kwargs.setdefault("activeforeground", TEXT)
-    kwargs.setdefault("selectcolor", BLUE)
-    return tk.Radiobutton(master, **kwargs)
-
-# Keep the original program logic and widget names, but give the widgets a modern look.
-tk = __import__("tkinter")
-Label = _modern_label
-Button = _modern_button
-Entry = _modern_entry
-Frame = _modern_frame
-Radiobutton = _modern_radiobutton
-
-_style = ttk.Style()
-try:
-    _style.theme_use("clam")
-except Exception:
-    pass
-
-_style.configure("Modern.TCombobox",
-                 fieldbackground=INPUT_BG,
-                 background=INPUT_BG,
-                 foreground="#111827",
-                 bordercolor=BORDER,
-                 lightcolor=INPUT_BG,
-                 darkcolor=INPUT_BG,
-                 padding=6)
-_style.map("Modern.TCombobox",
-           fieldbackground=[("readonly", INPUT_BG)],
-           foreground=[("readonly", "#111827")])
-
-_style.configure("Modern.Treeview",
-                 background="#F8FAFC",
-                 fieldbackground="#F8FAFC",
-                 foreground="#111827",
-                 rowheight=32,
-                 font=("Segoe UI", 10),
-                 borderwidth=0)
-_style.configure("Modern.Treeview.Heading",
-                 background="#1E40AF",
-                 foreground="white",
-                 font=("Segoe UI", 10, "bold"),
-                 padding=8)
-_style.map("Modern.Treeview",
-           background=[("selected", "#DBEAFE")],
-           foreground=[("selected", "#111827")])
-
-# ===================================================
 def get_db_connection():
     return mysql.connector.connect(
         host="localhost",user="root",password="bismillah",database="Exam"
@@ -150,13 +47,70 @@ def init_db():
         
 init_db()
 
-#Main Application Window
-root=Tk()
+root = Tk()
 
-root.title("Exam Management System")
-root.geometry("760x560")
-root.minsize(700, 520)
-root.configure(bg=APP_BG)
+root.option_add("*Font", ("Segoe UI", 10))
+root.option_add("*Label.background", "#ffffff")
+root.option_add("*Label.foreground", "#30435f")
+root.option_add("*Entry.font", ("Segoe UI", 10))
+root.option_add("*Entry.background", "#f7f9fc")
+root.option_add("*Entry.foreground", "#172b4d")
+root.option_add("*Entry.borderWidth", 1)
+root.option_add("*Entry.relief", "solid")
+root.option_add("*Radiobutton.background", "#ffffff")
+root.option_add("*Radiobutton.foreground", "#30435f")
+root.option_add("*Button.background", "#2f6fed")
+root.option_add("*Button.foreground", "#ffffff")
+root.option_add("*Button.font", ("Segoe UI", 10, "bold"))
+root.option_add("*Button.borderWidth", 0)
+
+def create_gradient_canvas(window):
+    canvas = Canvas(
+        window,
+        highlightthickness=0,
+        bd=0,
+        bg="#183b70",
+    )
+    canvas.pack(fill="both", expand=True)
+
+    def draw_gradient(event=None):
+        width = canvas.winfo_width()
+        height = canvas.winfo_height()
+        canvas.delete("gradient")
+        start = (15, 42, 82)
+        end = (43, 119, 219)
+        for y in range(max(height, 1)):
+            ratio = y / max(height - 1, 1)
+            red = int(start[0] + (end[0] - start[0]) * ratio)
+            green = int(start[1] + (end[1] - start[1]) * ratio)
+            blue = int(start[2] + (end[2] - start[2]) * ratio)
+            canvas.create_line(
+                0, y, width, y,
+                fill=f"#{red:02x}{green:02x}{blue:02x}",
+                tags="gradient",
+            )
+        canvas.tag_lower("gradient")
+
+    canvas.bind("<Configure>", draw_gradient)
+    return canvas
+
+def prepare_form_window(window, title, geometry):
+    window.title(title)
+    window.geometry(geometry)
+    window.resizable(False, False)
+
+    canvas = create_gradient_canvas(window)
+    window.update_idletasks()
+    content = ttk.Frame(canvas, style="Card.TFrame", padding=24)
+    canvas.create_window(
+        18,
+        18,
+        anchor="nw",
+        width=max(window.winfo_width() - 36, 1),
+        height=max(window.winfo_height() - 36, 1),
+        window=content,
+    )
+    return content
 
 # FORM 1: ENTER STUDENT DATA
 def open_form1():
@@ -165,7 +119,7 @@ def open_form1():
     name=StringVar()
     city=StringVar()
     age=StringVar()
-    clas=StringVar()
+    clas=StringVar(value="Select Class")
     s1=StringVar()
     s2=StringVar()
     s3=StringVar()
@@ -173,88 +127,92 @@ def open_form1():
     s5=StringVar()
     s6=StringVar()
     F1=Toplevel(root)
-    F1.title("Form 1 - Enter Student Data")
-    F1.geometry("620x700")
-    F1.configure(bg=APP_BG)
-    F1.transient(root)
+    form = prepare_form_window(F1, "Enter Student Data", "440x650")
     #Labels and Entries
-    Label(F1,text="Roll No:").grid(
+    Label(form,text="Roll No:").grid(
         row=0,column=0,padx=5,pady=5,sticky="e"
     )
-    e_roll=Entry(F1,textvariable=roll)
+    e_roll=Entry(form,textvariable=roll)
     e_roll.grid(row=0,column=1,padx=5,pady=5)
 
-    Label(F1,text="Name:").grid(
+    Label(form,text="Name:").grid(
         row=1,column=0,padx=5,pady=5,sticky="e"
     )
-    e_name=Entry(F1,textvariable=name)
+    e_name=Entry(form,textvariable=name)
     e_name.grid(row=1,column=1,padx=5,pady=5)
 
-    Label(F1,text="Gender:").grid(
+    Label(form,text="Gender:").grid(
         row=2,column=0
     )
     
-    e_gender1=Radiobutton(F1,variable=g,value="Male",text="Male")
+    e_gender1=Radiobutton(form,variable=g,value="Male",text="Male")
     e_gender1.grid(row=2, column=1
     )
 
-    e_gender2=Radiobutton(F1,variable=g,value="Female",text="Female")
+    e_gender2=Radiobutton(form,variable=g,value="Female",text="Female")
     e_gender2.grid(row=3, column=1
     )
 
-    Label(F1,text="Age:").grid(
+    Label(form,text="Age:").grid(
         row=4,column=0,padx=5,pady=5,sticky="e"
     )
-    e_age=Entry(F1,textvariable=age)
+    e_age=Entry(form,textvariable=age)
     e_age.grid(row=4, column=1, padx=5, pady=5)
 
-    Label(F1,text="City:").grid(
+    Label(form,text="City:").grid(
         row=5,column=0,padx=5,pady=5,sticky="e"
     )
-    e_city=Entry(F1,textvariable=city)
+    e_city=Entry(form,textvariable=city)
     e_city.grid(row=5, column=1, padx=5, pady=5)
 
-    Label(F1, text="Class:").grid(         
+    Label(form, text="Class:").grid(         
         row=6, column=0, padx=5, pady=5, sticky="e"
              )     
-    e_class=ttk.Combobox(F1,values=["5th","6th","7th","8th","9th","10th","11th","12th"],textvariable=clas,state="readonly",style="Modern.TCombobox")
+    e_class=ttk.Combobox(
+        form,
+        values=["Select Class","5th","6th","7th","8th","9th","10th","11th","12th"],
+        state="normal",
+        style="Modern.TCombobox",
+        width=13,
+    )
     e_class.grid(row=6,column=1,padx=1,pady=5,columnspan=2,sticky="w")
-    e_class.set("Select Class")
+    e_class.insert(0, "Select Class")
+    e_class.configure(state="readonly")
     
-    Label(F1, text="Physics:").grid(
+    Label(form, text="Physics:").grid(
         row=7, column=0, padx=5, pady=5, sticky="e"
             )
-    e_s1 = Entry(F1,textvariable=s1)     
+    e_s1 = Entry(form,textvariable=s1)
     e_s1.grid(row=7, column=1, padx=5, pady=5) 
  
-    Label(F1, text="Chemistry:").grid(
+    Label(form, text="Chemistry:").grid(
         row=8, column=0, padx=5, pady=5, sticky="e"     
             )
-    e_s2 =Entry(F1,textvariable=s2)
+    e_s2 =Entry(form,textvariable=s2)
     e_s2.grid(row=8, column=1, padx=5, pady=5) 
  
-    Label(F1, text="Maths:").grid(
+    Label(form, text="Maths:").grid(
         row=9, column=0, padx=5, pady=5, sticky="e"     
             )     
-    e_s3 =Entry(F1,textvariable=s3)     
+    e_s3 =Entry(form,textvariable=s3)
     e_s3.grid(row=9, column=1, padx=5, pady=5) 
  
-    Label(F1, text="Geography:").grid(
+    Label(form, text="Geography:").grid(
         row=10, column=0, padx=5, pady=5, sticky="e"     
             )     
-    e_s4 =Entry(F1,textvariable=s4)     
+    e_s4 =Entry(form,textvariable=s4)
     e_s4.grid(row=10, column=1, padx=5, pady=5)
 
-    Label(F1, text="English:").grid(
+    Label(form, text="English:").grid(
         row=11, column=0, padx=5, pady=5, sticky="e"     
             )     
-    e_s5 =Entry(F1,textvariable=s5)     
+    e_s5 =Entry(form,textvariable=s5)
     e_s5.grid(row=11, column=1, padx=5, pady=5)
 
-    Label(F1, text="Urdu:").grid(
+    Label(form, text="Urdu:").grid(
         row=12, column=0, padx=5, pady=5, sticky="e"     
             )     
-    e_s6 =Entry(F1,textvariable=s6)     
+    e_s6 =Entry(form,textvariable=s6)
     e_s6.grid(row=12, column=1, padx=5, pady=5)
 
     def save_data():
@@ -286,7 +244,14 @@ def open_form1():
         except Exception as e:
             messagebox.showerror("Error",f"Failed to save data: {e}")
     
-    Button(F1,text="Save Student",bg="green",fg="White",font=("Arial",10,"bold"),command=save_data).grid(
+    Button(
+        form,
+        text="Save Student",
+        bg="#16a34a",
+        activebackground="#15803d",
+        fg="White",
+        command=save_data,
+    ).grid(
         row=13,column=0,columnspan=2,padx=5,pady=5
     )
 
@@ -294,18 +259,15 @@ def open_form1():
 
 def open_form2():
     F2=Toplevel(root)
-    F2.title("Form 2 - Display Student Data")
-    F2.geometry("520x650")
-    F2.configure(bg=APP_BG)
-    F2.transient(root)
-    Label(F2,text="Enter Roll No:").grid(
+    form = prepare_form_window(F2, "Display Student Data", "430x520")
+    Label(form,text="Enter Roll No:").grid(
         row=0,column=0,padx=5,pady=5,sticky="e"
     )
-    e_search_roll=Entry(F2)
+    e_search_roll=Entry(form)
     e_search_roll.grid(row=0,column=1,padx=5,pady=5)
 
     #Frame to show Detais
-    display_frame=Frame(F2)
+    display_frame=Frame(form, bg="#ffffff")
     display_frame.grid(row=2,column=0,columnspan=2,pady=10)
 
     def search_student():
@@ -354,7 +316,7 @@ def open_form2():
                 )
         except Exception as e:
             messagebox.showerror("Error", f"Search failed: {e}")
-    Button(F2, text="Search", command=search_student,bg="green",fg="White",font=("Arial",10,"bold"),).grid(
+    Button(form, text="Search", command=search_student).grid(
         row=1, column=1,columnspan=2,pady=5
         )
 
@@ -363,16 +325,13 @@ def open_form2():
 
 def open_form3():
     F3 = Toplevel(root)
-    F3.title("Form 3 - Update Student Data")
-    F3.geometry("620x700")
-    F3.configure(bg=APP_BG)
-    F3.transient(root)
+    form = prepare_form_window(F3, "Update Student Data", "500x680")
 
-    Label(F3, text="Enter Roll No:").grid(
+    Label(form, text="Enter Roll No:").grid(
         row=0, column=0, padx=5, pady=5, sticky="e"
     )
 
-    e_search = Entry(F3)
+    e_search = Entry(form)
     e_search.grid(row=0, column=1, padx=5, pady=5)
 
     # Placeholders for entry widgets
@@ -396,11 +355,11 @@ def open_form3():
                 ]
 
                 for i, field in enumerate(fields):
-                    Label(F3, text=f"{field}:").grid(
+                    Label(form, text=f"{field}:").grid(
                         row=i + 2, column=0, padx=5, pady=2, sticky="e"
                     )
 
-                    ent = Entry(F3)
+                    ent = Entry(form)
                     ent.grid(row=i + 2, column=1, padx=5, pady=2)
                     ent.insert(0, str(row[i]))
 
@@ -411,7 +370,7 @@ def open_form3():
                     entries[field] = ent
 
                 Button(
-                    F3,
+                    form,
                     text="Update Data",
                     command=update_data
                 ).grid(
@@ -470,7 +429,7 @@ def open_form3():
             )
 
     Button(
-        F3,
+        form,
         text="Fetch Record",command=fetch_and_populate,bg="green",fg="White",font=("Arial",10,"bold")
     ).grid(
         row=1, column=0, columnspan=2, pady=5
@@ -482,16 +441,13 @@ def open_form3():
 
 def open_form4():
     F4 = Toplevel(root)
-    F4.title("Form 4 - Delete Student Data")
-    F4.geometry("520x260")
-    F4.configure(bg=APP_BG)
-    F4.transient(root)
+    form = prepare_form_window(F4, "Delete Student Data", "430x220")
 
-    Label(F4, text="Enter Roll No to Delete:").grid(
+    Label(form, text="Enter Roll No to Delete:").grid(
         row=0, column=0, padx=5, pady=10, sticky="e"
     )
 
-    e_del_roll = Entry(F4)
+    e_del_roll = Entry(form)
     e_del_roll.grid(row=0, column=1, padx=5, pady=10)
 
     def delete_data():
@@ -542,7 +498,7 @@ def open_form4():
                 )
 
     Button(
-        F4,
+        form,
         text="Delete Record",command=delete_data,bg="red",fg="White",font=("Arial",10,"bold"),
     ).grid(
         row=1, column=0, columnspan=2, pady=10
@@ -554,13 +510,10 @@ def open_form4():
 
 def open_form5():
     F5 = Toplevel(root)
-    F5.title("Form 5 - All Students & Export CSV")
-    F5.geometry("1100x520")
-    F5.configure(bg=APP_BG)
-    F5.transient(root)
+    form = prepare_form_window(F5, "All Students and Export CSV", "940x460")
 
     # Scrollable Table Frame setup
-    table_frame = Frame(F5)
+    table_frame = Frame(form, bg="#ffffff")
     table_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
     scroll_x = ttk.Scrollbar(table_frame, orient="horizontal")
@@ -585,9 +538,9 @@ def open_form5():
         table_frame,
         columns=cols,
         show="headings",
+        style="Modern.Treeview",
         xscrollcommand=scroll_x.set,
         yscrollcommand=scroll_y.set,
-        style="Modern.Treeview",
     )
 
     scroll_x.pack(side="bottom", fill="x")
@@ -651,56 +604,177 @@ def open_form5():
             )
 
     Button(
-        F5,
+        form,
         text="Export All Data to CSV",command=export_to_csv,bg="green",fg="White",font=("Arial",10,"bold")
     ).grid(
         row=1, column=0, pady=10
     )
 
-# ================= MODERN DASHBOARD =================
-root.grid_columnconfigure(0, weight=1)
-root.grid_rowconfigure(1, weight=1)
+# Main Application Window
+root.title("Exam Management System")
+root.geometry("760x620")
+root.minsize(680, 560)
+root.configure(bg="#0f172a")
 
-header = tk.Frame(root, bg=SIDEBAR_BG, height=95)
-header.grid(row=0, column=0, sticky="ew")
-header.grid_propagate(False)
+style = ttk.Style(root)
+style.theme_use("clam")
+style.configure("Main.TFrame", background="#0f172a")
+style.configure("Card.TFrame", background="#111c32")
+style.configure(
+    "Title.TLabel",
+    background="#0f172a",
+    foreground="#ffffff",
+    font=("Segoe UI", 28, "bold"),
+)
+style.configure(
+    "Subtitle.TLabel",
+    background="#0f172a",
+    foreground="#cbd5e1",
+    font=("Segoe UI", 10),
+)
+style.configure(
+    "Menu.TButton",
+    background="#2f6fed",
+    foreground="#ffffff",
+    font=("Segoe UI", 11, "bold"),
+    padding=(18, 13),
+    borderwidth=0,
+)
+style.map(
+    "Menu.TButton",
+    background=[("active", "#2458bd"), ("pressed", "#1d479a")],
+)
+for name, color, active in (
+    ("Green", "#16a34a", "#15803d"),
+    ("Blue", "#2563eb", "#1d4ed8"),
+    ("Orange", "#ea580c", "#c2410c"),
+    ("Red", "#dc2626", "#b91c1c"),
+    ("Purple", "#7c3aed", "#6d28d9"),
+):
+    style.configure(
+        f"{name}.Menu.TButton",
+        background=color,
+        foreground="#ffffff",
+        font=("Segoe UI", 10, "bold"),
+        padding=(16, 13),
+        borderwidth=0,
+    )
+    style.map(
+        f"{name}.Menu.TButton",
+        background=[("active", active), ("pressed", active)],
+    )
+style.configure(
+    "Exit.TButton",
+    background="#1e293b",
+    foreground="#cbd5e1",
+    font=("Segoe UI", 10, "bold"),
+    padding=(12, 8),
+    borderwidth=1,
+    relief="solid",
+)
+style.configure(
+    "Modern.Treeview",
+    background="#f7f9fc",
+    fieldbackground="#f7f9fc",
+    foreground="#30435f",
+    rowheight=30,
+    font=("Segoe UI", 9),
+)
+style.configure(
+    "Modern.TCombobox",
+    foreground="#172b4d",
+    fieldbackground="#f7f9fc",
+    background="#f7f9fc",
+    arrowcolor="#172b4d",
+    padding=5,
+)
+style.map(
+    "Modern.TCombobox",
+    fieldbackground=[("readonly", "#f7f9fc")],
+    foreground=[("readonly", "#172b4d")],
+)
+style.configure(
+    "Modern.Treeview.Heading",
+    background="#172b4d",
+    foreground="#ffffff",
+    font=("Segoe UI", 9, "bold"),
+    padding=8,
+)
+style.map(
+    "Modern.Treeview",
+    background=[("selected", "#dbe8ff")],
+    foreground=[("selected", "#172b4d")],
+)
+style.map(
+    "Exit.TButton",
+    background=[("active", "#334155")],
+    foreground=[("active", "#ffffff")],
+)
 
-tk.Label(header, text="EXAM MANAGEMENT SYSTEM",
-         bg=SIDEBAR_BG, fg="white",
-         font=("Segoe UI", 24, "bold")).pack(anchor="w", padx=35, pady=(18, 0))
+main_frame = ttk.Frame(root, style="Main.TFrame", padding=(36, 32, 36, 24))
+main_frame.pack(fill="both", expand=True)
+main_frame.columnconfigure(0, weight=1)
+main_frame.columnconfigure(1, weight=1)
 
-tk.Label(header, text="Student records • Marks • Database management",
-         bg=SIDEBAR_BG, fg=MUTED,
-         font=("Segoe UI", 10)).pack(anchor="w", padx=38, pady=(2, 0))
+ttk.Label(main_frame, text="EXAM MANAGEMENT SYSTEM", style="Title.TLabel").grid(
+    row=0, column=0, columnspan=2, sticky="w", pady=(0, 4)
+)
+ttk.Label(
+    main_frame,
+    text="Student records  •  Marks  •  Database management",
+    style="Subtitle.TLabel",
+).grid(row=1, column=0, columnspan=2, sticky="w", pady=(0, 28))
 
-dashboard = tk.Frame(root, bg=APP_BG)
-dashboard.grid(row=1, column=0, sticky="nsew", padx=28, pady=25)
-dashboard.grid_columnconfigure(0, weight=1)
-dashboard.grid_columnconfigure(1, weight=1)
+Frame(main_frame, bg="#2563eb", height=3).grid(
+    row=2, column=0, columnspan=2, sticky="ew", pady=(0, 28)
+)
 
-tk.Label(dashboard, text="Dashboard",
-         bg=APP_BG, fg=TEXT,
-         font=("Segoe UI", 18, "bold")).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 5))
+ttk.Label(main_frame, text="Dashboard", style="Title.TLabel").grid(
+    row=3, column=0, columnspan=2, sticky="w", pady=(0, 4)
+)
+ttk.Label(
+    main_frame,
+    text="Choose an operation to continue",
+    style="Subtitle.TLabel",
+).grid(row=4, column=0, columnspan=2, sticky="w", pady=(0, 22))
 
-tk.Label(dashboard, text="Choose an operation to continue",
-         bg=APP_BG, fg=MUTED,
-         font=("Segoe UI", 10)).grid(row=1, column=0, columnspan=2, sticky="w", pady=(0, 18))
+menu_items = (
+    ("1  •  Enter Student Data", open_form1, "Green"),
+    ("2  •  Display Student Data", open_form2, "Blue"),
+    ("3  •  Update Student Data", open_form3, "Orange"),
+    ("4  •  Delete Student Data", open_form4, "Red"),
+    ("5  •  Display All & Export Data", open_form5, "Purple"),
+)
 
-Button(dashboard, text="  1  •  Enter Student Data  ",
-       width=25, bg=GREEN, command=open_form1).grid(row=2, column=0, padx=8, pady=8, sticky="ew")
-Button(dashboard, text="  2  •  Display Student Data  ",
-       width=25, bg=BLUE, command=open_form2).grid(row=2, column=1, padx=8, pady=8, sticky="ew")
-Button(dashboard, text="  3  •  Update Student Data  ",
-       width=25, bg=ORANGE, command=open_form3).grid(row=3, column=0, padx=8, pady=8, sticky="ew")
-Button(dashboard, text="  4  •  Delete Student Data  ",
-       width=25, bg=RED, command=open_form4).grid(row=3, column=1, padx=8, pady=8, sticky="ew")
-Button(dashboard, text="  5  •  Display All & Export Data  ",
-       width=25, bg=PURPLE, command=open_form5).grid(row=4, column=0, columnspan=2, padx=8, pady=8, sticky="ew")
+for index, (label, command, color) in enumerate(menu_items[:4]):
+    ttk.Button(
+        main_frame,
+        text=label,
+        command=command,
+        style=f"{color}.Menu.TButton",
+    ).grid(
+        row=5 + index // 2,
+        column=index % 2,
+        sticky="ew",
+        padx=(0, 8) if index % 2 == 0 else (8, 0),
+        pady=6,
+    )
 
-footer = tk.Label(root, text="Exam Management System  •  MySQL Database",
-                  bg=APP_BG, fg="#64748B",
-                  font=("Segoe UI", 9))
-footer.grid(row=2, column=0, pady=(0, 15))
-# ===================================================
+ttk.Button(
+    main_frame,
+    text="5  •  Display All & Export Data",
+    command=open_form5,
+    style="Purple.Menu.TButton",
+).grid(row=7, column=0, columnspan=2, sticky="ew", pady=(6, 0))
+
+ttk.Button(main_frame, text="Close", command=root.destroy, style="Exit.TButton").grid(
+    row=8, column=0, columnspan=2, pady=(30, 0)
+)
+
+ttk.Label(
+    main_frame,
+    text="Exam Management System  •  MySQL Database",
+    style="Subtitle.TLabel",
+).grid(row=9, column=0, columnspan=2, pady=(34, 0))
 
 root.mainloop()
